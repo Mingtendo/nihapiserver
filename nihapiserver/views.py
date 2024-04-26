@@ -1,23 +1,28 @@
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
 # Create your views here.
 
 def index(request):
     return HttpResponse("Hello, world. You're at the myapp index.")
 
 # Fetches detailed information for a list of IDs.
-def ncbi_api_get(request):
+@api_view(["GET", "POST"])
+def ncbi_api_get(request, format=None):
     if request.method == "GET":
         # Handle GET request
-        return JsonResponse({'message': 'GET request received'})
+        return Response(request)
     
     else:
-        return JsonResponse({'error': 'Method not allowed'}, status=405)
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @csrf_exempt    # Removes error of not having a CSRF cookie set.
+@api_view(["GET", "POST"])
 # Retrieves list of publication IDs based on a given query.
-def ncbi_api_post(request):
+def ncbi_api_post(request, format=None):
 
     print(f"request: {request}")
     
@@ -29,4 +34,4 @@ def ncbi_api_post(request):
         return JsonResponse(response.json(), safe=False)
     
     else:
-        return JsonResponse({'error': 'Method not allowed'}, status=405)
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
