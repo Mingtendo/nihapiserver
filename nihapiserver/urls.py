@@ -17,7 +17,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 
+from . import views
+
+# Sends any urls that have 'nihapi' in it to the configuration file.
 urlpatterns = [
     path("nihapi/", include("myapp.urls")),
-    path('admin/', admin.site.urls),
+    path("", views.index, name="index"),
+    path("get", views.ncbi_api_get, name='ncbi_get'),
+    path("post", views.ncbi_api_post, name='ncbi_post'),
+    path("admin/", admin.site.urls),
 ]
