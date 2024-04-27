@@ -2,6 +2,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 import requests
+import json
 # Create your views here.
 
 """
@@ -84,16 +85,24 @@ def ncbi_api_post(request, format=None):
     
     # The NIH API technically accepts both request types and returns the same thing.
     if request.method == 'POST' or request.method == 'GET':
+
+        dummy_data = {
+            "term": ["PNAS[ta]"],
+            "retstart": 0,
+            "retmax": 20
+        }
+
+        incoming_data = request.data
+        print(f"incoming data: {incoming_data}, data type: {type(incoming_data)}")
+
         # Base URL
-        api_url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed"
-        term = ["term=", "PNAS"]
-        retstart = "restart=0"
-        retmax = "retmax=50"
-        retmode = "retmode=json"
+        api_url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&"
+        incoming_data["term"] = "term=" + "+AND+".join(incoming_data["term"])
+        incoming_data["retstart"] = "restart=" + str(incoming_data["retstart"]) if "retstart" in incoming_data else "restart=0"     # Used for pagination
+        incoming_data["retmax"] = "retmax=" + str(incoming_data["retmax"]) if "retmax" in incoming_data else "retmax=20"       # Used for pagination
+        incoming_data["retmode"] = "retmode=json"
 
-        terms = term[0] + term[1] + "+AND+".join(term[2:])
-
-        complete_url = "&".join([api_url, terms, retstart, retmax, retmode])
+        complete_url = api_url+"&".join(incoming_data[k] for k in incoming_data)
         # Handle GET request
         response = requests.post(complete_url)
         print(f"response: {response.json()}")
