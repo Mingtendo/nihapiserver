@@ -20,7 +20,9 @@ from django.urls import include, path
 from . import views
 
 # Sends any urls that have 'nihapi' in it to the configuration file.
+# To access, use project name.
 urlpatterns = [
+    path("index/", views.index),
     path("get/", views.ncbi_api_get, name='ncbi_get'),
     path("post/", views.ncbi_api_post, name='ncbi_post'),
     path("admin/", admin.site.urls)
