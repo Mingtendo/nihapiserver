@@ -1,35 +1,54 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, {useEffect, useState } from 'react'
+import SearchBar from './components/SearchBar'
+import PaperIDQueryService from './services/communicator'
+import DisplayArea from './components/DisplayArea'
 
-function App() {
-  const [count, setCount] = useState(0)
+const App = () =>
+{
+    const [retstart, setRetstart] = useState(0)
+    const [retmax, setRetmax] = useState(20)
+    const [searchterms, setTerms] = useState("")
+    const [returnIDs, setreturnIDs] = useState([])
 
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    const handleSearch = (event) =>
+    {
+        const typedIn = String(event.target.value)
+
+        setTerms(typedIn)
+    }
+
+    const submitQueryHandler = (event) =>
+    {
+        event.preventDefault()
+        const searchData = 
+        {
+            "term": searchterms,
+            "retstart": retstart,
+            "retmax": retmax
+        }
+        console.dir(searchData)
+        // Send the POST request with this JSON object.
+        PaperIDQueryService
+        .getPubIDs(searchData)
+        .then((returnData) =>
+        {
+            console.dir(returnData)
+            const listofids = Array.from(returnData["esearchresult"]["idlist"])
+            console.log(`list of ids: ${listofids}`)
+            setreturnIDs(listofids)
+        })
+    }
+
+
+    return (
+        <div>
+            <h2>Search NIH Databases!</h2>
+
+            <SearchBar query={searchterms} handler={handleSearch} submithandler={submitQueryHandler} />
+
+            <DisplayArea uidcount={returnIDs.length} returnedIDs={returnIDs}/>
+        </div>
+    )
 }
 
 export default App
