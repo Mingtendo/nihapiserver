@@ -3,11 +3,9 @@ from rest_framework.response import Response
 from rest_framework import status
 import requests
 import json
+import xmltodict
 # Create your views here.
 
-"""
-
-"""
 @api_view(["GET"])
 def index(request):
     return Response(data="Hello world", status=status.HTTP_200_OK)
@@ -27,6 +25,7 @@ def ncbi_api_get(request):
 
         # Base URL
         api_url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&"
+        response = None
 
         try:
             incoming_data = request.data
@@ -34,13 +33,23 @@ def ncbi_api_get(request):
 
             print(f"ids: {ids}")
 
-            complete_url = api_url+ids
+            complete_url = api_url+ids+"&retmod=xml"
             # Handle GET request
             response = requests.get(complete_url)
 
-            return Response(response)
         except:
+            print("Some error occurred.")
             return Response(status=status.HTTP_400_BAD_REQUEST)
+        
+        processed = xmltodict.parse(response.text)
+        enconding = response.encoding
+        #print(processed)
+        converted = json.dumps(processed)
+        print(converted)
+
+        #convertedXML = xmltodict.parse(response.json())
+
+        return Response(processed)
     
     return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
