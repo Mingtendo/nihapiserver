@@ -8,7 +8,9 @@ const Count = (props) =>
 const ID = ({uidnumber}) =>
 {   
     const direct_link = "https://pubmed.ncbi.nlm.nih.gov/"
-    return <div>{`${direct_link}${uidnumber}`}</div>
+    return (
+        <div><a href={`${direct_link}${uidnumber}`}>{`${direct_link}${uidnumber}`}</a></div>
+    )
 }
 
 const IDList = ({papers, showlist}) =>

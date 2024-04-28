@@ -1,5 +1,5 @@
 import React, {useEffect, useState } from 'react'
-import SearchArea from './components/SearchBar'
+import SearchArea from './components/SearchArea'
 import PaperIDQueryService from './services/communicator'
 import DisplayArea from './components/DisplayArea'
 
