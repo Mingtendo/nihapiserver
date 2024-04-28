@@ -97,7 +97,7 @@ def ncbi_api_post(request, format=None):
 
         # Base URL
         api_url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&"
-        incoming_data["term"] = "term=" + "+AND+".join(incoming_data["term"])
+        incoming_data["term"] = "term=" + incoming_data["term"]
         incoming_data["retstart"] = "restart=" + str(incoming_data["retstart"]) if "retstart" in incoming_data else "restart=0"     # Used for pagination
         incoming_data["retmax"] = "retmax=" + str(incoming_data["retmax"]) if "retmax" in incoming_data else "retmax=20"       # Used for pagination
         incoming_data["retmode"] = "retmode=json"

@@ -27,10 +27,12 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# Use a whitelist instead for better security.
+CORS_ORIGIN_ALLOW_ALL = True
 
 # Application definition
-
 INSTALLED_APPS = [
+    'corsheaders',
     'rest_framework',
     'nihapiserver',
     'django.contrib.admin',
@@ -41,7 +43,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ]
 
+# Added corsheader middle to enable all CORS origins.
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
