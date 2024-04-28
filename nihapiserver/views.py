@@ -10,6 +10,38 @@ import xmltodict
 def index(request):
     return Response(data="Hello world", status=status.HTTP_200_OK)
 
+def extractEssentialInfo(dictinput, n):
+
+    if n == 1:
+        article_data = dictinput.get("PubmedArticle", {}).get("MedlineCitation", {})
+        smallform = {}
+        smallform["PMID"] = article_data.get("PMID",{}).get("#text", "") or ""
+        smallform["Title"] = article_data.get("Article",{}).get("ArticleTitle") or ""
+        smallform["Abstract"] = article_data.get("Article",{}).get("Abstract") or ""
+        smallform["Author List"] = article_data.get("Article",{}).get("AuthorList") or ""
+        smallform["Journal"] = article_data.get("Article",{}).get("Journal",{}).get("Title",{}) or ""
+        smallform["Pub Year"] = article_data.get("Article",{}).get("Journal",{}).get("JournalIssue",{}).get("Pubdate",{}).get("Year",{}) or ""
+        return smallform
+
+    parsedArticles = {}
+    articlecounter = 1
+
+    # Multiple articles returned.
+    for article in dictinput["PubmedArticle"]:
+        article_data = article.get("MedlineCitation", {})
+        smallform = {}
+        smallform["PMID"] = article_data.get("PMID",{}).get("#text", "") or ""
+        smallform["Title"] = article_data.get("Article",{}).get("ArticleTitle") or ""
+        smallform["Abstract"] = article_data.get("Article",{}).get("Abstract") or ""
+        smallform["Author List"] = article_data.get("Article",{}).get("AuthorList") or ""
+        smallform["Journal"] = article_data.get("Article",{}).get("Journal",{}).get("Title",{}) or ""
+        smallform["Pub Year"] = article_data.get("Article",{}).get("Journal",{}).get("JournalIssue",{}).get("Pubdate",{}).get("Year",{}) or ""
+        #smallform["MeSH Terms"] = "<MeshHeadingList>/<MeshHeading>"
+        parsedArticles[articlecounter] = smallform
+        articlecounter += 1
+
+    return parsedArticles
+
 # Fetches detailed information for a list of IDs.
 @api_view(["GET"])
 def ncbi_api_get(request):
@@ -42,14 +74,25 @@ def ncbi_api_get(request):
             return Response(status=status.HTTP_400_BAD_REQUEST)
         
         processed = xmltodict.parse(response.text)
-        enconding = response.encoding
-        #print(processed)
-        converted = json.dumps(processed)
-        print(converted)
+        processed = processed["PubmedArticleSet"]
 
-        #convertedXML = xmltodict.parse(response.json())
+        print(f"processed: {processed}")
 
-        return Response(processed)
+        # If there is only one article, it is not put into a list. Check whether we have one or more.
+        numberOfArticles = 0
+        if type(processed["PubmedArticle"]) == type({}):
+            numberOfArticles = 1
+        elif processed.get("PubmedArticle") is not None:
+            numberOfArticles =  len(processed["PubmedArticle"])
+        
+        # If we have more than one article, extract all the info we need.
+        parsedArticles = extractEssentialInfo(processed, numberOfArticles) if numberOfArticles > 0 else {}
+
+        converted = json.dumps(parsedArticles)
+        converted = json.loads(converted)
+        #print(converted)
+
+        return Response(converted)
     
     return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
