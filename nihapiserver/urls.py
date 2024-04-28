@@ -23,7 +23,7 @@ from . import views
 # To access, use project name.
 urlpatterns = [
     path("index/", views.index),
-    path("get/", views.ncbi_api_get, name='ncbi_get'),
-    path("post/", views.ncbi_api_post, name='ncbi_post'),
+    path("efetch/", views.ncbi_api_get, name='ncbi_get'),
+    path("esearch/", views.ncbi_api_post, name='ncbi_post'),
     path("admin/", admin.site.urls)
 ]
