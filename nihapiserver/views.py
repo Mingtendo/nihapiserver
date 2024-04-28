@@ -30,7 +30,7 @@ def ncbi_api_get(request):
 
         try:
             incoming_data = request.data
-            ids = ",".join(incoming_data["term"])
+            ids = "id="+incoming_data["term"]
 
             print(f"ids: {ids}")
 
