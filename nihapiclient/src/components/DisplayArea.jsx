@@ -1,7 +1,7 @@
 const Count = (props) =>
 {
     return (
-        <h3>Number of results: {props.count}</h3>
+        <h4>Number of results: {props.count}</h4>
     )
 }
 
@@ -17,9 +17,9 @@ const IDList = ({papers, showlist}) =>
     return (
         <ul>
             {
-                papers.map((p) =>
+                papers.map((p, index) =>
                 {
-                    return <ID uidnumber={p} />
+                    return <ID uidnumber={p} key={index}/>
                 })
             }
         </ul>
@@ -28,12 +28,19 @@ const IDList = ({papers, showlist}) =>
 
 const DisplayArea = (props) =>
 {
-    if (props.uidcount > 0)
+    if (props.esearch !== null)
     {
+        const returnedJSON = Object(props.esearch)
+        console.log("converted esearch result to proper object:")
+        console.dir(returnedJSON)
+        const uidcount = returnedJSON["esearchresult"]["count"]
+        const returnedids = Array.from(returnedJSON["esearchresult"]["idlist"])
+        const querytranslation = returnedJSON["esearchresult"]["querytranslation"]
         return (
             <>
-                <Count count={props.uidcount} />
-                <IDList papers={props.returnedIDs} showlist={true} />
+                <Count count={uidcount} />
+                <IDList papers={returnedids} showlist={true} />
+                querytranslation: {querytranslation}
             </>
         )
     }
