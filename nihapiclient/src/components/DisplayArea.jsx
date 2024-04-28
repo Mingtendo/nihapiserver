@@ -22,10 +22,48 @@ const IDList = ({papers, showlist}) =>
             {
                 papers.map((p, index) =>
                 {
-                    return <ID uidnumber={p} key={index}/>
+                    return <ID uidnumber={p} key={`paper${index}`}/>
                 })
             }
         </ul>
+    )
+}
+
+const AbstractSection = (props) =>
+{
+    return (
+        <>
+            <h3>{props.title}</h3>
+            <br />
+            {props.text}
+        </>
+    )
+}
+
+const Abstract = (props) =>
+{
+    const absdata = Object(props.abstractdata)
+    const cprtinfo = absdata["CopyrightInformation"]
+    const concise = absdata["AbstractText"].map((section) =>
+    {
+        const sectionObject = 
+        {
+            "title": section["@Label"],
+            "text": section["#text"]
+        }
+        return sectionObject
+    })
+
+    return (
+        <>
+            {
+                concise.map((s, index) =>
+                {
+                    return <AbstractSection key={`abssect${index}`} title={s["title"]} text={s["text"]}/>
+                })
+            }
+            <footer>{cprtinfo}</footer>
+        </>
     )
 }
 
@@ -47,6 +85,19 @@ const DisplayArea = (props) =>
             </>
         )
     }
+
+    if (props.efetch !== null)
+    {
+        const returnedJSON = Object(props.efetch)
+        const abstractdata = returnedJSON["Abstract"]
+        console.dir(returnedJSON)
+        return (
+            <>
+                <Abstract abstractdata={abstractdata} />
+            </>
+        )
+    }
+
     return (
         <div>
             <h4>Nothing searched, nothing gained. :D</h4>

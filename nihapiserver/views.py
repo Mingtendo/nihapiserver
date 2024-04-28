@@ -10,6 +10,7 @@ import xmltodict
 def index(request):
     return Response(data="Hello world", status=status.HTTP_200_OK)
 
+# Extracts necessary information from the article. Unclean, but it works for now.
 def extractEssentialInfo(dictinput, n):
 
     if n == 1:
@@ -43,16 +44,17 @@ def extractEssentialInfo(dictinput, n):
     return parsedArticles
 
 # Fetches detailed information for a list of IDs.
-@api_view(["GET"])
+# Changed to post because Axios' get requests do not send any data.
+@api_view(["GET", "POST"])
 def ncbi_api_get(request):
 
     # Check that we actually get a GET request.
-    if request.method == "GET":
+    print(f"request: {request}")
+    print(f"request data: {request.data}")
+    if request.method == "POST":
 
         dummy_data = {
-            "term": "medical[pg]",
-            "retstart": 0,
-            "retmax": 20
+            "term": "38648671"
         }
 
         # Base URL
@@ -63,7 +65,7 @@ def ncbi_api_get(request):
             incoming_data = request.data
             ids = "id="+incoming_data["term"]
 
-            print(f"ids: {ids}")
+            #print(f"ids: {ids}")
 
             complete_url = api_url+ids+"&retmod=xml"
             # Handle GET request
@@ -76,7 +78,7 @@ def ncbi_api_get(request):
         processed = xmltodict.parse(response.text)
         processed = processed["PubmedArticleSet"]
 
-        print(f"processed: {processed}")
+        #print(f"processed: {processed}")
 
         # If there is only one article, it is not put into a list. Check whether we have one or more.
         numberOfArticles = 0

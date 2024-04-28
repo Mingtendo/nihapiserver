@@ -10,7 +10,8 @@ const getPubIDs = (searchdata) =>
 
 const getPubDetails = (searchdata) =>
 {
-    const request = axios.get(`${baseURL}efetch/`, searchdata)
+    console.log("Reached getPubDetails")
+    const request = axios.post(`${baseURL}efetch/`, searchdata)
     return request.then((response) => response.data)
 }
 

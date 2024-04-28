@@ -1,10 +1,11 @@
 const SearchBar = (props) =>
 {
     return (
-        <form onSubmit={props.submithandler} id={props.id}>
-            <textarea value={props.query} onChange={props.handler} placeholder="To use pagination, type [pg] after your query (i.e. cancer[pg])"/>
+        <form id={props.id}>
+            <textarea id="searchbar" rows={5} cols={50} value={props.query} onChange={props.handler} placeholder="To use pagination, type [pg] after your query (i.e. cancer[pg])"/>
             <br/>
-            <button type="submit">ID Search</button>
+            <button type="submit" onClick={props.generalQueryHandler}>General Query</button>
+            <button type="submit" onClick={props.idQueryHandler}>ID Search</button>
         </form>
     )
 }
@@ -28,7 +29,7 @@ const SearchArea = (props) =>
 {
     return (
         <>
-            <SearchBar id="searchbar" query={props.query} handler={props.handler} submithandler={props.submithandler} />
+            <SearchBar id="searchbar" query={props.query} handler={props.handler} generalQueryHandler={props.generalQueryHandler} idQueryHandler={props.idQueryHandler} />
             <FieldSelector fieldtags={props.fieldtags}/>
         </>
     )

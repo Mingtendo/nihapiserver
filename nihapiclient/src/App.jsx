@@ -10,6 +10,7 @@ const App = () =>
     const [searchterms, setTerms] = useState("")
     const [returnIDs, setreturnIDs] = useState([])
     const [esearchres, setEsearchres] = useState(null)
+    const [efetchres, setEfetchres] = useState(null)
     const fieldtags = 
     [
         "Affiliation [ad]","All Fields [all]","Article Identifier [aid]","Author [au]","Author Identifier [auid]","Book [book]",
@@ -26,11 +27,12 @@ const App = () =>
     const handleSearch = (event) =>
     {
         const typedIn = String(event.target.value)
+        console.log(typedIn)
 
         setTerms(typedIn)
     }
 
-    const submitQueryHandler = (event) =>
+    const generalQueryHandler = (event) =>
     {
         event.preventDefault()
         const searchData = 
@@ -50,6 +52,25 @@ const App = () =>
             console.log(`list of ids: ${listofids}`)
             setreturnIDs(listofids)
             setEsearchres(returnData)
+            setEfetchres(null)
+        })
+    }
+
+    const idQueryHandler = (event) =>
+    {
+        event.preventDefault()
+        const searchData = 
+        {
+            "term": searchterms
+        }
+        console.dir(searchData)
+        PaperIDQueryService
+        .getPubDetails(searchData)
+        .then((returnData) =>
+        {
+            console.dir(returnData)
+            setEfetchres(returnData)
+            setEsearchres(null)
         })
     }
 
@@ -58,9 +79,9 @@ const App = () =>
         <div>
             <h2>Search NIH Databases!</h2>
 
-            <SearchArea query={searchterms} handler={handleSearch} submithandler={submitQueryHandler} fieldtags={fieldtags}/>
+            <SearchArea query={searchterms} handler={handleSearch} generalQueryHandler={generalQueryHandler} idQueryHandler={idQueryHandler} fieldtags={fieldtags}/>
 
-            <DisplayArea esearch={esearchres}/>
+            <DisplayArea esearch={esearchres} efetch={efetchres}/>
         </div>
     )
 }
