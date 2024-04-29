@@ -4,8 +4,8 @@ const SearchBar = (props) =>
         <form id={props.id}>
             <textarea id="searchbar" rows={5} cols={50} value={props.query} onChange={props.handler} placeholder="To use pagination, type [pg] after your query (i.e. cancer[pg])"/>
             <br/>
-            <button type="submit" onClick={props.generalQueryHandler}>General Query</button>
-            <button type="submit" onClick={props.idQueryHandler}>ID Search</button>
+            <button type="submit" onClick={props.generalQueryHandler}>ESearch</button>
+            <button type="submit" onClick={props.idQueryHandler}>EFetch</button>
         </form>
     )
 }

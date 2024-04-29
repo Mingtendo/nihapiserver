@@ -27,8 +27,7 @@ const App = () =>
     const handleSearch = (event) =>
     {
         const typedIn = String(event.target.value)
-        console.log(typedIn)
-
+        // console.log(typedIn)
         setTerms(typedIn)
     }
 
@@ -47,9 +46,9 @@ const App = () =>
         .getPubIDs(searchData)
         .then((returnData) =>
         {
-            console.dir(returnData)
+            // console.dir(returnData)
             const listofids = Array.from(returnData["esearchresult"]["idlist"])
-            console.log(`list of ids: ${listofids}`)
+            // console.log(`list of ids: ${listofids}`)
             setreturnIDs(listofids)
             setEsearchres(returnData)
             setEfetchres(null)
@@ -63,12 +62,12 @@ const App = () =>
         {
             "term": searchterms
         }
-        console.dir(searchData)
+        // console.dir(searchData)
         PaperIDQueryService
         .getPubDetails(searchData)
         .then((returnData) =>
         {
-            console.dir(returnData)
+            // console.dir(returnData)
             setEfetchres(returnData)
             setEsearchres(null)
         })

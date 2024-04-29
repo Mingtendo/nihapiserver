@@ -33,8 +33,7 @@ const AbstractSection = (props) =>
 {
     return (
         <>
-            <h3>{props.title}</h3>
-            <br />
+            <h4>{props.title}</h4>
             {props.text}
         </>
     )
@@ -56,6 +55,7 @@ const Abstract = (props) =>
 
     return (
         <>
+            <h3>Abstract</h3>
             {
                 concise.map((s, index) =>
                 {
@@ -63,6 +63,49 @@ const Abstract = (props) =>
                 })
             }
             <footer>{cprtinfo}</footer>
+        </>
+    )
+}
+
+const Author = (props) =>
+{
+    return (
+        <li>
+            {props.firstname} {props.lastname}
+        </li>
+    )
+}
+
+const AuthorList = (props) =>
+{
+    const names = props.authorlist["Author"].map((a) =>
+    {
+        const authorObject =
+        {
+            "first": a["ForeName"],
+            "last": a["LastName"]
+        }
+        return authorObject
+    })
+
+    return (
+        <ul>
+        {
+            names.map((a, index) =>
+            {
+                return <Author key={`author${index}`} firstname={a["first"]} lastname={a["last"]}/>
+            })
+        }
+        </ul>
+    )
+}
+
+const ArticleInfoConstructor = (props) =>
+{
+    return (
+        <>
+            <Abstract abstractdata={abstractdata} />
+            <AuthorList authorlist={authors} />
         </>
     )
 }
@@ -90,10 +133,12 @@ const DisplayArea = (props) =>
     {
         const returnedJSON = Object(props.efetch)
         const abstractdata = returnedJSON["Abstract"]
+        const authors = returnedJSON["Author List"]
         console.dir(returnedJSON)
         return (
             <>
                 <Abstract abstractdata={abstractdata} />
+                <AuthorList authorlist={authors} />
             </>
         )
     }
