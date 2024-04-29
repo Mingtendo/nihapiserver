@@ -67,7 +67,7 @@ const App = () =>
         .getPubDetails(searchData)
         .then((returnData) =>
         {
-            // console.dir(returnData)
+            console.dir(returnData)
             setEfetchres(returnData)
             setEsearchres(null)
         })

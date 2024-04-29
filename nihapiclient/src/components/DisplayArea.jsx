@@ -1,3 +1,4 @@
+// Anything below this is for ESearch results. 
 const Count = (props) =>
 {
     return (
@@ -29,8 +30,10 @@ const IDList = ({papers, showlist}) =>
     )
 }
 
+// Anything below this is for EFetch results.
 const AbstractSection = (props) =>
 {
+    // This is used for abstracts that have multiple sections.
     return (
         <>
             <h4>{props.title}</h4>
@@ -43,7 +46,23 @@ const Abstract = (props) =>
 {
     const absdata = Object(props.abstractdata)
     const cprtinfo = absdata["CopyrightInformation"]
-    const concise = absdata["AbstractText"].map((section) =>
+    let concise = ""
+
+    // Typical abstracts are just strings.
+    if (typeof absdata["AbstractText"] === "string")
+    {
+        concise = absdata["AbstractText"]
+        return (
+            <>
+            <h3>Abstract</h3>
+            {concise}
+            <footer>{cprtinfo}</footer>
+        </>
+        )
+    }
+
+    // Some abstracts are fancy and have sections, so they must be parsed differently
+    concise = absdata["AbstractText"].map((section) =>
     {
         const sectionObject = 
         {
@@ -52,7 +71,8 @@ const Abstract = (props) =>
         }
         return sectionObject
     })
-
+        
+    // Base return case assumes fancy abstracts with multiple sections. They appear as arrays of data in the "AbstractText" key.
     return (
         <>
             <h3>Abstract</h3>
@@ -102,8 +122,19 @@ const AuthorList = (props) =>
 
 const ArticleInfoConstructor = (props) =>
 {
+    // console.log("Rearched Article Info Constructor")
+    // console.dir(props.artjson)
+    const returnedJSON = Object(props.artjson)
+    const abstractdata = returnedJSON["Abstract"]
+    const authors = returnedJSON["Author List"]
+    const title = returnedJSON["Title"]
+    const PMID = returnedJSON["PMID"]
+    const journal = returnedJSON["Journal"]
     return (
         <>
+            <h2>{title}</h2>
+            <h3>{journal}</h3>
+            PMID: {PMID}
             <Abstract abstractdata={abstractdata} />
             <AuthorList authorlist={authors} />
         </>
@@ -131,14 +162,16 @@ const DisplayArea = (props) =>
 
     if (props.efetch !== null)
     {
-        const returnedJSON = Object(props.efetch)
-        const abstractdata = returnedJSON["Abstract"]
-        const authors = returnedJSON["Author List"]
-        console.dir(returnedJSON)
+        console.log("Reached efetch clause")
+        const rawInfoArray = Array.from(props.efetch)
         return (
             <>
-                <Abstract abstractdata={abstractdata} />
-                <AuthorList authorlist={authors} />
+            {
+                rawInfoArray.map((dataObject, index) =>
+                {
+                    return <ArticleInfoConstructor key={`article${index}`} artjson={dataObject}/>
+                })
+            }
             </>
         )
     }

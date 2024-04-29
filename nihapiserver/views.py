@@ -13,6 +13,8 @@ def index(request):
 # Extracts necessary information from the article. Unclean, but it works for now.
 def extractEssentialInfo(dictinput, n):
 
+    parsedArticles = []
+
     if n == 1:
         article_data = dictinput.get("PubmedArticle", {}).get("MedlineCitation", {})
         smallform = {}
@@ -22,10 +24,10 @@ def extractEssentialInfo(dictinput, n):
         smallform["Author List"] = article_data.get("Article",{}).get("AuthorList") or ""
         smallform["Journal"] = article_data.get("Article",{}).get("Journal",{}).get("Title",{}) or ""
         smallform["Pub Year"] = article_data.get("Article",{}).get("Journal",{}).get("JournalIssue",{}).get("Pubdate",{}).get("Year",{}) or ""
-        return smallform
+        parsedArticles.append(smallform)
+        return parsedArticles
 
-    parsedArticles = {}
-    articlecounter = 1
+    
 
     # Multiple articles returned.
     for article in dictinput["PubmedArticle"]:
@@ -38,8 +40,7 @@ def extractEssentialInfo(dictinput, n):
         smallform["Journal"] = article_data.get("Article",{}).get("Journal",{}).get("Title",{}) or ""
         smallform["Pub Year"] = article_data.get("Article",{}).get("Journal",{}).get("JournalIssue",{}).get("Pubdate",{}).get("Year",{}) or ""
         #smallform["MeSH Terms"] = "<MeshHeadingList>/<MeshHeading>"
-        parsedArticles[articlecounter] = smallform
-        articlecounter += 1
+        parsedArticles.append(smallform)
 
     return parsedArticles
 
